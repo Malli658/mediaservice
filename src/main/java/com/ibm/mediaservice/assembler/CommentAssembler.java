@@ -11,6 +11,7 @@ import com.googlecode.jmapper.JMapper;
 import com.ibm.mediaservice.dto.model.CommentModel;
 import com.ibm.mediaservice.model.Comment;
 import com.ibm.mediaservice.resources.CommentResource;
+import com.ibm.mediaservice.resources.UserResources;
 
 @Component
 public class CommentAssembler extends RepresentationModelAssemblerSupport<Comment,CommentModel>{
@@ -23,6 +24,7 @@ public class CommentAssembler extends RepresentationModelAssemblerSupport<Commen
 	public CommentModel toModel(Comment entity) {
 		CommentModel commentModel=instantiateModel(entity);
 		commentModel.add(linkTo(methodOn(CommentResource.class).getCommentsByParent(entity.getId(),null)).withRel("replay"));
+		commentModel.add(linkTo(methodOn(UserResources.class).getUser(new Long(entity.getUserID()))).withRel("commenter"));
 		return commentModel;
 	}
 	

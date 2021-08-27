@@ -39,7 +39,7 @@ public class MediaModel extends RepresentationModel<MediaModel>{
 	@JMap
 	private String description;
 	@JMap
-	private String effects;
+	private List<String> effects;
 	@JMap
 	private List<String> tags;
 	@JMap
@@ -63,5 +63,9 @@ public class MediaModel extends RepresentationModel<MediaModel>{
 	private List<Integer> like;
 	@JMap
 	private List<Integer> unlike;
+	
+	private Integer likeCount;
+	
+	private Integer unlikeCount;
 	
 } 

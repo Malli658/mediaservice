@@ -14,6 +14,7 @@ import com.ibm.mediaservice.dto.model.MediaModel;
 import com.ibm.mediaservice.model.Media;
 import com.ibm.mediaservice.resources.CommentResource;
 import com.ibm.mediaservice.resources.MediaResource;
+import com.ibm.mediaservice.resources.UserResources;
 
 @Component
 public class MediaAssembler extends RepresentationModelAssemblerSupport<Media,MediaModel>{
@@ -26,6 +27,8 @@ public class MediaAssembler extends RepresentationModelAssemblerSupport<Media,Me
 	public MediaModel toModel(Media entity) {
 		MediaModel resource=instantiateModel(entity);
 		
+		resource.setLikeCount(resource.getLike().size());
+		resource.setUnlikeCount(resource.getUnlike().size());
 		try {
 			resource.add(linkTo(methodOn(MediaResource.class).getFile(entity.getMediaID())).withRel("mediafile"));
 		} catch (IOException e) {
@@ -33,6 +36,7 @@ public class MediaAssembler extends RepresentationModelAssemblerSupport<Media,Me
 			e.printStackTrace();
 		}
 		
+		resource.add(linkTo(methodOn(UserResources.class).getUser(new Long(entity.getUserId()))).withRel("owner"));
 		resource.add(linkTo(methodOn(CommentResource.class).getCommentsByMedia(entity.getId(),null)).withRel("comments"));
 		
 		try {

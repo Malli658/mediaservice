@@ -2,6 +2,7 @@ package com.ibm.mediaservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -18,4 +19,9 @@ public class SpringFoxConfig {
           .paths(PathSelectors.any())                          
           .build();                                           
     }
+	
+	/*@Bean
+	ForwardedHeaderFilter forwardedHeaderFilter() {
+	    return new ForwardedHeaderFilter();
+	}*/
 }

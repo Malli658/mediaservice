@@ -26,4 +26,5 @@ public interface MediaService  {
 	public String removesLikeUnlike(String mediaID, Integer userID, String type);
 	List<Media> getMediaByUserId(Integer userId);
 	public String updateDefualtProfile(String mediaID,Integer userID);
+	public String updateCommentComments(String mediaID);
 }

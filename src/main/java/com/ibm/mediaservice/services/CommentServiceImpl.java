@@ -26,7 +26,10 @@ public class CommentServiceImpl implements CommentService{
 
 	@Autowired
 	private CommentRepository commentRepository;
-	
+
+	@Autowired
+	private MediaService mediaService;
+
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
@@ -35,12 +38,15 @@ public class CommentServiceImpl implements CommentService{
 		JMapper<Comment, UploadCommentDTO> commentMapper=new JMapper<>(Comment.class, UploadCommentDTO.class);
 		Comment comment=commentMapper.getDestination(dto);
 		comment.setCreatedDate(LocalDateTime.now());
-		return commentRepository.save(comment);
+		comment=commentRepository.save(comment);
+		if(comment.getId()!=null)
+			mediaService.updateCommentComments(comment.getMediaId());
+		return comment;
 	}
 
 	@Override
 	public Page<Comment> getCommentsByMediaId(String mediaId,Pageable pageable){
-		
+
 		Query query=new Query(Criteria.where("mediaId").is(mediaId));
 		Long count=mongoTemplate.count(query, Comment.class);
 		List<Comment> list=mongoTemplate.find(query.with(pageable), Comment.class);
@@ -69,13 +75,13 @@ public class CommentServiceImpl implements CommentService{
 
 	@Override
 	public String removesLikeUnlike(String commentID, Integer userID, String type){
-			commentRepository.findById(commentID).ifPresent(comment->{
-				if(type.equalsIgnoreCase("Like"))
-					comment.getLike().remove(userID);
-				else if(type.equalsIgnoreCase("unlike"))
-					comment.getUnlike().remove(userID);
-				commentRepository.save(comment);
-			});
-			return "success";
+		commentRepository.findById(commentID).ifPresent(comment->{
+			if(type.equalsIgnoreCase("Like"))
+				comment.getLike().remove(userID);
+			else if(type.equalsIgnoreCase("unlike"))
+				comment.getUnlike().remove(userID);
+			commentRepository.save(comment);
+		});
+		return "success";
 	}
 }

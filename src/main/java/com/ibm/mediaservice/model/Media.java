@@ -36,19 +36,19 @@ public class Media implements Serializable {
 	private Integer userId;
 	private String fileName;
 	private String caption;
-	private Boolean hidden;
+	private Boolean hidden=false;
 	private String description;
 	private String mediaID;
-	private String effects;
+	private List<String> effects=new ArrayList<>();
 	private List<String> tags=new ArrayList<>();
 	private MediaType type;
 	private String videoPoster;
 	private String fileType;
 	private Long fileSize;
 	private LocalDateTime uploadedDateTime;
-	private Boolean defualtProfile;
-	private List<Integer> like;
-	private List<Integer> unlike;
-	private Long shares;
-	private Long noOfComments;
+	private Boolean defualtProfile=false;
+	private List<Integer> like=new ArrayList<>();
+	private List<Integer> unlike=new ArrayList<>();
+	private Long shares=0L;
+	private Long noOfComments=0L;
 }

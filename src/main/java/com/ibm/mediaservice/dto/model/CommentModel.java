@@ -27,7 +27,7 @@ import com.ibm.mediaservice.dto.model.MediaModel.MediaModelBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@Relation(collectionRelation = "media", itemRelation = "media")
+@Relation(collectionRelation = "comments", itemRelation = "comments")
 @JsonInclude(Include.NON_NULL)
 public class CommentModel extends RepresentationModel<CommentModel>{
 	@JMap

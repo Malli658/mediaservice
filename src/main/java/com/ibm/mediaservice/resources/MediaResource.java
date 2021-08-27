@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,13 +60,16 @@ public class MediaResource {
 
 
 	@GetMapping(value="/msg")
-	public String getMessage(){
+	public String getMessage(HttpServletRequest req){
+		System.out.println(req.toString());
 		return "Hi Boss!";
 	}
 
-	@PostMapping(value="/save", consumes="multipart/form-data")
-	public ResponseEntity<String> saveMedia(@ModelAttribute UploadMediaDTO media) throws IOException{
+	@PostMapping(value="/save", consumes="application/json")
+	public ResponseEntity<String> saveMedia(@RequestBody UploadMediaDTO media) throws IOException{
+		System.out.println(media);
 		mediaService.saveMedia(media);
+		
 		return new ResponseEntity<String>("success",HttpStatus.ACCEPTED);
 	}
 
@@ -101,6 +106,7 @@ public class MediaResource {
 	public ResponseEntity<PagedModel<MediaModel>> getMyMedia(@RequestParam(defaultValue="ALL",required=false) String mediaType
 			,@PathVariable(name="userId") Integer userId, @PageableDefault(value = 30)Pageable pageable,@RequestParam Integer owner) {
 		Page<Media> result=mediaService.getMyMedia(mediaType, userId,pageable,owner);
+		System.out.println("i got the response ");
 		PagedModel<MediaModel> collModel = pagedResourcesAssembler
                 .toModel(result, mediaAssembler);
 		collModel.add(linkTo(methodOn(MediaResource.class).getMyMedia(mediaType, userId, pageable,owner)).withSelfRel());
@@ -123,12 +129,13 @@ public class MediaResource {
 	}
 	
 	@PatchMapping("/like/unlike")
-	public ResponseEntity<String> updateLikeUnlike(@RequestParam String mediaID,@RequestParam Integer userID,@RequestParam String type,@RequestParam String operation){
+	public ResponseEntity<String> updateLikeUnlike(@RequestParam String media,@RequestParam Integer userID,@RequestParam String type,@RequestParam String operation){
+		
 		String result=null;
 		if(operation.equalsIgnoreCase("add"))
-			result=mediaService.addLikeUnlike(mediaID, userID, type);
+			result=mediaService.addLikeUnlike(media, userID, type);
 		else if(operation.equalsIgnoreCase("remove"))
-			result=mediaService.removesLikeUnlike(mediaID, userID, type);
+			result=mediaService.removesLikeUnlike(media, userID, type);
 		return new ResponseEntity<>(result,HttpStatus.OK);
 		
 	}

@@ -5,24 +5,25 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import com.googlecode.jmapper.annotations.JMap;
+import com.ibm.mediaservice.dto.constants.MediaType;
 
 
 @Setter
 @Getter
+@ToString
 public class UploadMediaDTO {
-	
-	private MultipartFile image;
 	
 	@JMap("caption")
 	private String mediaTitle;
 	@JMap("description")
 	private String mediaDescription;
 	@JMap
-	private String effects;
+	private List<String> effects=new ArrayList<>();;
 	@JMap
 	private List<String> tags=new ArrayList<>();
 	@JMap
@@ -33,5 +34,15 @@ public class UploadMediaDTO {
 	private Boolean hidden;
 	@JMap
 	private Boolean defualtProfile;
+	@JMap
+	private String fileType;
+	@JMap
+	private Long fileSize;
+	@JMap
+	private MediaType type;
+	@JMap
+	private String fileName;
+	
+	
 	
 }

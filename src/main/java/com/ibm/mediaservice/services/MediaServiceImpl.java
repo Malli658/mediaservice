@@ -54,12 +54,12 @@ public class MediaServiceImpl implements MediaService{
 	private Media uploadMedia(UploadMediaDTO mediaDTO) throws IOException{
 		JMapper<Media, UploadMediaDTO> mediaMapper=new JMapper<>(Media.class, UploadMediaDTO.class);
 		Media media=mediaMapper.getDestination(mediaDTO);
-		MultipartFile file=mediaDTO.getImage();
-		media.setMediaID(saveMediaFile(file.getInputStream(), file.getContentType(), file.getName()));
+		//MultipartFile file=mediaDTO.getImage();
+		//media.setMediaID(saveMediaFile(file.getInputStream(), file.getContentType(), file.getName()));
 		media.setUploadedDateTime(LocalDateTime.now());
-		media.setFileName(file.getOriginalFilename());
-		media.setFileType(file.getContentType());
-		media.setFileSize(file.getSize());
+		//media.setFileName(file.getOriginalFilename());
+		//media.setFileType(file.getContentType());
+		//media.setFileSize(file.getSize());
 		if(	getMediaByUserId(mediaDTO.getUserId()).size()<=0)
 			media.setDefualtProfile(true);
 		media=mediaRepository.save(media);
@@ -87,7 +87,10 @@ public class MediaServiceImpl implements MediaService{
 	@Override
 	public String saveMedias(List<UploadMediaDTO> mediasDTO) throws IOException {
 		JMapper<Media, UploadMediaDTO> mediaMapper=new JMapper<>(Media.class, UploadMediaDTO.class);
-		mediasDTO.stream().parallel().map(mdto->mediaMapper.getDestination(mdto)).forEach(media->{mediaRepository.save(media);});
+		mediasDTO.stream().parallel().map(mdto->mediaMapper.getDestination(mdto)).forEach(media->{
+			media.setUploadedDateTime(LocalDateTime.now());
+			mediaRepository.save(media);
+		});
 		return "success";
 	}
 
@@ -144,16 +147,20 @@ public class MediaServiceImpl implements MediaService{
 	public Media updateMedia(UploadMediaDTO mediaDTO, String mediaId)
 			throws IOException {
 		Media media=mediaRepository.findById(mediaId).orElseThrow(()->(new MediaNotFoundException("mediaID:"+mediaId)));
-		if(mediaDTO.getImage()!=null){
+		/*if(mediaDTO.getImage()!=null){
 			String gridFsId=saveMediaFile(mediaDTO.getImage().getInputStream(), mediaDTO.getImage().getContentType(), mediaDTO.getImage().getOriginalFilename());
 			deleteFile(media.getMediaID());
 			media.setMediaID(gridFsId);
-		}
+		}*/
 		media.setCaption(mediaDTO.getMediaTitle());
 		media.setDescription(mediaDTO.getMediaDescription());
 		media.setTags(mediaDTO.getTags());
 		media.setHidden(mediaDTO.getHidden());
 		media.setDefualtProfile(mediaDTO.getDefualtProfile());
+		if(!media.getMediaID().equalsIgnoreCase(mediaDTO.getMediaID())){
+			deleteFile(media.getMediaID());
+			media.setMediaID(mediaDTO.getMediaID());
+		}
 		media=mediaRepository.save(media);
 		return media;
 	}
@@ -161,10 +168,16 @@ public class MediaServiceImpl implements MediaService{
 	@Override
 	public String addLikeUnlike(String mediaID, Integer userID, String type){
 		mediaRepository.findById(mediaID).ifPresent(media->{
-			if(type.equalsIgnoreCase("Like"))
+			if(type.equalsIgnoreCase("Like")){
 				media.getLike().add(userID);
-			else if(type.equalsIgnoreCase("unlike"))
+				if(media.getUnlike().contains(userID))
+					media.getUnlike().remove(userID);
+			}
+			else if(type.equalsIgnoreCase("unlike")){
 				media.getUnlike().add(userID);
+				if(media.getLike().contains(userID))
+					media.getLike().remove(userID);
+			}
 			mediaRepository.save(media);
 		});
 		return "success";
@@ -199,6 +212,15 @@ public class MediaServiceImpl implements MediaService{
 			med.setDefualtProfile(true);
 			mediaRepository.save(med);
 		});
+		return "success";
+	}
+
+
+	@Override
+	public String updateCommentComments(String mediaID) {
+		Media media=getMedia(mediaID);
+		media.setNoOfComments(media.getNoOfComments()+1);
+		mediaRepository.save(media);
 		return "success";
 	}
 
