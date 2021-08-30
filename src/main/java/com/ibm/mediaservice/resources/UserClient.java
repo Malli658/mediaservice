@@ -9,7 +9,7 @@ import com.ibm.mediaservice.model.User;
 @FeignClient("user-service")
 public interface UserClient {
 	
-	@GetMapping(value="/user/v1/user/get/{userId}")
+	@GetMapping(value="/user/v1/api/public/get/{userId}")
 	User getUser(@PathVariable("userId") Long userId);
 
 }

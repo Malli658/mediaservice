@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.ibm.authorization.repository.UserRepository;
 import com.ibm.mediaservice.assembler.MediaAssembler;
 import com.ibm.mediaservice.dto.GetFileDTO;
 import com.ibm.mediaservice.dto.UploadFileResponseDTO;
@@ -54,6 +55,9 @@ public class MediaResource {
 
 	@Autowired
 	private MediaAssembler mediaAssembler;
+	
+	@Autowired
+	UserRepository userREpo;
 	
 	@Autowired
     private PagedResourcesAssembler<Media> pagedResourcesAssembler;
